@@ -9,7 +9,7 @@ import com.sun.javadoc.Parameter;
 import com.sun.javadoc.ParameterizedType;
 import com.sun.javadoc.ProgramElementDoc;
 import com.sun.javadoc.Type;
-import com.sun.javadoc.TypeVariable;
+import ext.plantuml.com.google.zxing.common.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +18,13 @@ import java.util.List;
  * Represents a class internal or external to the model.
  */
 public class ModelClass {
-    public ModelClass(Model model, Type type, boolean isInternal) {
+    public ModelClass(Model model, Type type, boolean isInternal, String comment) {
         _model = model;
+        if(comment == null) {
+            comment = " \n ";
+        }
+        comment = comment + " \n ";
+        _comment = comment.trim().split("\n")[0];
         _type = type;
        _isInternal = isInternal;
         _classDoc = _type.asClassDoc();
@@ -42,16 +47,30 @@ public class ModelClass {
     }
     
     public static class Field extends VisibilityItem {
-        public Field(String name, String type, Visibility visibility, boolean isStatic) {
-            super(visibility);
-            this.name = name;
-            this.type = type;
-            this.isStatic = isStatic;
-        }
+//        public Field(String name, String type, Visibility visibility, boolean isStatic) {
+//            super(visibility);
+//            this.name = name;
+//            this.type = type;
+//            this.isStatic = isStatic;
+//        }
         
         public String name;
         public String type;
         public boolean isStatic;
+
+        public String rawCommentDoc;
+        public Field(String name, String type, Visibility visibility, boolean isStatic, String rawCommentDoc) {
+            super(visibility);
+            this.name = name;
+            this.type = type;
+            this.isStatic = isStatic;
+            System.out.println("get print raw comment: " + rawCommentDoc);
+            if(rawCommentDoc == null) {
+                rawCommentDoc = " \n ";
+            }
+            rawCommentDoc = rawCommentDoc + " \n ";
+            this.rawCommentDoc = rawCommentDoc.trim().split("\n")[0];
+        }
     }
     
     public static class Constructor extends VisibilityItem {
@@ -99,7 +118,10 @@ public class ModelClass {
     public String fullNameWithoutParameters() {
         return fullNameWithoutParameters(_type);
     }
-    
+    public String comment() {
+        return _comment;
+    }
+
     public String shortName() {
         return shortName(_type);
     }
@@ -521,7 +543,7 @@ public class ModelClass {
         for (FieldDoc fieldDoc: _classDoc.fields(false)) {
             Type type = fieldDoc.type();
             String typeName = shortName(type);
-            Field mappedField = new Field(fieldDoc.name(), typeName, mapVisibility(fieldDoc), fieldDoc.isStatic());
+            Field mappedField = new Field(fieldDoc.name(), typeName, mapVisibility(fieldDoc), fieldDoc.isStatic(), fieldDoc.getRawCommentText());
             fields.add(mappedField);
         }
         orderVisibility(fields, _fields);
@@ -601,6 +623,7 @@ public class ModelClass {
     }
     
     private final Model _model;
+    private final String _comment;
     private final Type _type;
     private final ClassDoc _classDoc;
     private final List<ModelClass> _params = new ArrayList<>();

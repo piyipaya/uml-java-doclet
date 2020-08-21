@@ -84,12 +84,21 @@ public abstract class PumlDiagramPrinter extends Printer {
             boolean showMethods,
             boolean publicMethodsOnly,
             boolean includeTypeInfo) {
+        showFields = true;
+        showMethods = true;
+        publicMethodsOnly = true;
+        includeTypeInfo = true;
+        // 是否要链接到其他svg
+        boolean linkParent = false;
+
         classDeclaration(modelClass, displayPackageName);
-        if (filepath != null && filepath.length() > 0) {
-            print(" [[");
-            print(filepath);
-            print("{" + modelClass.fullNameWithoutParameters() + "}");
-            print("]]");
+        if (linkParent){
+            if(filepath != null && filepath.length() > 0){
+                print(" [[");
+                print(filepath);
+                print("{" + modelClass.fullNameWithoutParameters() + "}");
+                print("]]");
+            }
         }
         if (color != null && color.length() > 0) {
             print(" #" + color);
@@ -146,6 +155,10 @@ public abstract class PumlDiagramPrinter extends Printer {
     }
     
     public void annotations(ModelClass modelClass) {
+        System.out.println("class comment:" + modelClass.comment());
+        if(modelClass.comment()!=null && modelClass.comment().trim().length()>0){
+            print("<<" + modelClass.comment() + ">>");
+        }
         List<String> annotations = modelClass.annotations();
         if (annotations.size() > 0) {
             for (String annotation: modelClass.annotations()) {
@@ -189,6 +202,10 @@ public abstract class PumlDiagramPrinter extends Printer {
             print(field.type + " ");
         }
         print(field.name);
+        if(field.rawCommentDoc!=null) {
+            System.out.println("print raw comment: " + field.rawCommentDoc);
+            print(" ; " + field.rawCommentDoc);
+        }
         newline();
     }
     

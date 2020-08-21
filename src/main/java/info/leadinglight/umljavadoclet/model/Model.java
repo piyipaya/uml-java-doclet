@@ -98,7 +98,7 @@ public class Model {
         String fullName = ModelClass.fullName(classType);
         ModelClass modelClass = _classes.get(fullName);
         if (modelClass == null) {
-            modelClass = new ModelClass(this, classType, false);
+            modelClass = new ModelClass(this, classType, false, "no comment");
             modelClass.map();
             _classes.put(fullName, modelClass);
         }
@@ -117,7 +117,7 @@ public class Model {
     private void mapClasses() {
         // First add the classes and packages to the model.
         for (ClassDoc classDoc: _rootDoc.classes()) {
-            ModelClass modelClass = new ModelClass(this, classDoc, true);
+            ModelClass modelClass = new ModelClass(this, classDoc, true, classDoc.getRawCommentText());
             String fullName = ModelClass.fullName(classDoc);
             _classes.put(fullName, modelClass);
         }

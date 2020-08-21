@@ -4,6 +4,7 @@ import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.LanguageVersion;
 import com.sun.javadoc.RootDoc;
 import com.sun.tools.doclets.standard.Standard;
+import com.sun.tools.javadoc.Start;
 import info.leadinglight.umljavadoclet.model.Model;
 import info.leadinglight.umljavadoclet.model.ModelClass;
 import info.leadinglight.umljavadoclet.model.ModelPackage;
@@ -31,6 +32,7 @@ import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.version.Version;
 
 public class UmlJavaDoclet extends Standard {
+
     public static boolean start(RootDoc root) {
         // Generate Javadocs using standard doclet.
         System.out.println("Generating Javadocs...");
